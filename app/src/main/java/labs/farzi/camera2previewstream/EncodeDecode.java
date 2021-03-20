@@ -1,4 +1,4 @@
-package labs.farzi.camera2previewstream;
+        package labs.farzi.camera2previewstream;
 
 import android.annotation.SuppressLint;
 import android.media.MediaCodec;
@@ -6,6 +6,7 @@ import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
+import android.os.Environment;
 import android.util.Log;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -43,7 +44,7 @@ public class EncodeDecode
     private MediaCodec mEncoder;
     private MediaMuxer mMuxer;
     private int mTrackIndex;
-    private boolean mMuxerStarted;
+    private boolean mMuxerStarted = false;
     private ArrayList<Mat> frames;
 
     public EncodeDecode(ArrayList<Mat> frames, File outputFile)
@@ -87,7 +88,7 @@ public class EncodeDecode
             throws Exception
     {
         mLargestColorDelta = -1;
-        boolean result = true;
+        boolean result;
         try
         {
             MediaCodecInfo codecInfo = selectCodec(MIME_TYPE);
@@ -136,7 +137,8 @@ public class EncodeDecode
             // The various
             // format details will be passed through the csd-0 meta-data later
             // on.
-            String outputPath = outputFile.getAbsolutePath();
+//            String outputPath = outputFile.getAbsolutePath();
+            String outputPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/myvideo.mp4";
             try
             {
                 mMuxer = new MediaMuxer(outputPath,
@@ -153,12 +155,15 @@ public class EncodeDecode
             if (mEncoder != null)
             {
                 mEncoder.stop();
+                Log.d("hehe", "encoder stopped");
                 mEncoder.release();
             }
             if (mMuxer != null)
             {
                 mMuxer.stop();
-                mMuxer.release();
+                Log.d("hehe", "muxer stopped");  
+//                mMuxer.release();
+                mMuxerStarted = false;
             }
             if (VERBOSE)
                 Log.i(TAG, "Largest color delta: " + mLargestColorDelta);

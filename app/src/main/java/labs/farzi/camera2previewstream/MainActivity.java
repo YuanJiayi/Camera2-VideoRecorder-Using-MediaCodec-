@@ -41,6 +41,7 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -233,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                 Button btn = (Button)v;
                 if(btn.getText().toString().equalsIgnoreCase("VIDEO CREATION START")){
                     btn.setText("VIDEO CREATION STOP");
-                    dump = false;
+                    dump = true;
                     encodeDecoder = new EncodeDecode(frames, file);
                     try {
                         encodeDecoder.encodeDecodeVideoFromBufferToSurface(width, height, bitRate);
@@ -263,14 +264,14 @@ public class MainActivity extends AppCompatActivity {
 
         try
         {
-            File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/take");
+//            File directory = new File(String.valueOf(Environment.getExternalStorageDirectory()));
+            File directory = new File(String.valueOf(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)));
             if (!directory.exists())
             {
                 directory.mkdir();
             }
             file = new File(directory, "myvideo" + ".mp4");
-        } catch (Throwable e)
-        {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -522,7 +523,8 @@ public class MainActivity extends AppCompatActivity {
             if(dump) {
                 processImage(ImageUtils.imageToMat(i));
             }
-            i.close();
+            if(i != null) i.close();
+//            i.close();
             Log.d("hehe", "onImageAvailable");
         }
     };
